@@ -10,3 +10,6 @@ variable "pub_instance_type" {
   type = string
 }
 
+variable "dev_repo_name" {
+  type = list(string)
+}

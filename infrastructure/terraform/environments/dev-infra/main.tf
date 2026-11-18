@@ -31,3 +31,9 @@ module "dev_infra_bastion_ec2" {
   pub_security_group = aws_security_group.dev_infra_bastion_security_group.id
 }
 
+module "dev_infra_ecr" {
+  source = "../../modules/ecr"
+  env = var.env
+  for_each = toset(var.dev_repo_name)
+  repo_name = each.value
+}
