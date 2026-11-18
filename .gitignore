@@ -9,3 +9,10 @@ build/
 
 # java
 *.jar
+
+# terraform
+.terraform
+.terraform.*
+terraform.tfstate
+*.plan
+*.tfplan
