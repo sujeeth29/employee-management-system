@@ -6,12 +6,13 @@ resource "aws_vpc" "emp_infra_vpc" {
 }
 
 resource "aws_subnet" "emp_infra_pub_1_app" {
+  for_each = var.emp_infra_public_subnets_keys
   vpc_id = aws_vpc.emp_infra_vpc.id
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "ap-south-1a"
-  map_public_ip_on_launch = true
+  cidr_block = each.value.cidr
+  availability_zone = each.value.availability_zone
+  map_public_ip_on_launch = each.value.map_public_ip_on_launch
   tags = {
-    Name = "${var.env}-app-pub-subnet-1a"
+    Name = "${var.env}-pub-${each.value.subnet_name}"
   }
 }
 
@@ -40,24 +41,16 @@ resource "aws_route_table" "emp_infra_pub_rt" {
 
 resource "aws_route_table_association" "emp_pub_rt_appsub_associa" {
   route_table_id = aws_route_table.emp_infra_pub_rt.id
-  subnet_id = aws_subnet.emp_infra_pub_1_app.id
+  subnet_id = values(aws_subnet.emp_infra_pub_1_app)[*].id
 }
 
-resource "aws_subnet" "emp_infra_pri_subnet_1a" {
+resource "aws_subnet" "emp_infra_pri_subnets" {
+  for_each = var.emp_infra_private_subnet_keys
   vpc_id = aws_vpc.emp_infra_vpc.id
-  cidr_block = "10.0.3.0/24"
-  availability_zone = "ap-south-1a"
+  cidr_block = each.value.cidr
+  availability_zone = each.value.availability_zone
   tags = {
-    Name = "${var.env}-pri-subent-1a"
-  }
-}
-
-resource "aws_subnet" "emp_infra_pri_subnet_1b" {
-  vpc_id = aws_vpc.emp_infra_vpc.id
-  cidr_block = "10.0.4.0/24"
-  availability_zone = "ap-south-1b"
-  tags = {
-    Name = "${var.env}-pri-subnet-1b"
+    Name = "${var.env}-pri-${each.value.subnet_name}"
   }
 }
 
@@ -82,8 +75,7 @@ resource "aws_route_table" "emp_infra_pri_rt" {
 }
 
 resource "aws_route_table_association" "emp_infra_pri_rt_subnet_associa" {
-  for_each = {subnet_1= aws_subnet.emp_infra_pri_subnet_1a.id, subnet_2=aws_subnet.emp_infra_pri_subnet_1b.id}
   route_table_id = aws_route_table.emp_infra_pri_rt.id
-  subnet_id = each.value
+  subnet_id = values(aws_subnet.emp_infra_pri_subnets)[*].id
 }
 
