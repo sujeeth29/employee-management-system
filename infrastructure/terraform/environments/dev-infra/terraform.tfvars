@@ -1,3 +1,3 @@
 env = "dev"
-instance_name = "dev"
+instance_name = "bastion"
 pub_instance_type = "t3.micro"
