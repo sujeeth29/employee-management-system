@@ -40,8 +40,9 @@ resource "aws_route_table" "emp_infra_pub_rt" {
 }
 
 resource "aws_route_table_association" "emp_pub_rt_appsub_associa" {
+  count = length(values(aws_subnet.emp_infra_pub_1_app)[*].id)
   route_table_id = aws_route_table.emp_infra_pub_rt.id
-  subnet_id = values(aws_subnet.emp_infra_pub_1_app)[*].id
+  subnet_id = values(aws_subnet.emp_infra_pub_1_app)[count.index].id
 }
 
 resource "aws_subnet" "emp_infra_pri_subnets" {
@@ -75,7 +76,8 @@ resource "aws_route_table" "emp_infra_pri_rt" {
 }
 
 resource "aws_route_table_association" "emp_infra_pri_rt_subnet_associa" {
+  count = length(values(aws_subnet.emp_infra_pri_subnets)[*].id)
   route_table_id = aws_route_table.emp_infra_pri_rt.id
-  subnet_id = values(aws_subnet.emp_infra_pri_subnets)[*].id
+  subnet_id = values(aws_subnet.emp_infra_pri_subnets)[count.index].id
 }
 
