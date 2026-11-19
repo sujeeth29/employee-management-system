@@ -31,7 +31,14 @@ variable "dev_repo_name" {
   type = list(string)
 }
 
+variable "dev_infra_cluster_authentication_mode" {
+  type = string
+}
 
-# variable "dev_cluster_node_group_policies" {
-#   type = list(string)
-# }
+variable "dev_infra_cluster_version" {
+  type = string
+}
+
+variable "dev_cluster_node_group_policies" {
+  type = list(string)
+}

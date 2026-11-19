@@ -1,4 +1,4 @@
-resource "aws_iam_role" "emp_infra_eks_clouster_role" {
+resource "aws_iam_role" "emp_infra_eks_cluster_role" {
   name = "${var.env}-cluster-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -18,23 +18,21 @@ resource "aws_iam_role" "emp_infra_eks_clouster_role" {
 }
 
 resource "aws_eks_cluster" "emp_infra_eks_cluster" {
-  for_each = toset(var.emp_infra_pri_subnets)
   name = "${var.env}-infra-cluster"
   access_config {
-    authentication_mode = "api"
+    authentication_mode = var.authentication_mode
   }
-  version = "1.35"
-  role_arn = aws_iam_role.emp_infra_eks_clouster_role.arn
+  version = var.cluster_version
+  role_arn = aws_iam_role.emp_infra_eks_cluster_role.arn
   vpc_config {
-    subnet_ids = [ 
-        each.value
-    ]
+    subnet_ids = var.emp_infra_pri_subnets
   }
+  depends_on = [ aws_iam_role.emp_infra_eks_cluster_role ]
 }
 
 resource "aws_iam_role_policy_attachment" "emp_infra_cluster_role_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:Policy/AmazonEKSClusterPolicy"
-  role = aws_iam_role.emp_infra_eks_clouster_role.name
+  role = aws_iam_role.emp_infra_eks_cluster_role.name
 }
 
 resource "aws_iam_role" "emp_infra_node_group_role" {
@@ -62,11 +60,10 @@ resource "aws_iam_role_policy_attachment" "emp_infra_node_group_policies_attachm
 }
 
 resource "aws_eks_node_group" "emp_infra_cluster_node_group" {
-  for_each = toset(var.emp_infra_pri_subnets)
   cluster_name = aws_eks_cluster.emp_infra_eks_cluster.name
   node_group_name = "${var.env}-cluster-node-group"
   node_role_arn = aws_iam_role.emp_infra_node_group_role.arn
-  subnet_ids = [ each.value ]
+  subnet_ids = var.emp_infra_pri_subnets
   scaling_config {
     desired_size = 1
     max_size = 2
@@ -75,4 +72,6 @@ resource "aws_eks_node_group" "emp_infra_cluster_node_group" {
   update_config {
     max_unavailable = 1
   }
+
+  depends_on = [ aws_iam_role.emp_infra_node_group_role ]
 }

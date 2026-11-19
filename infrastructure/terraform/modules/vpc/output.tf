@@ -3,10 +3,10 @@ output "emp_infra_vpc_id" {
 }
 
 output "emp_infra_public_subnet_ids" {
-  value = {
-    for key, subnet in aws_subnet.emp_infra_pub_1_app : 
-    key => subnet.id
-  }
+  value = values(aws_subnet.emp_infra_pub_1_app)[*].id
 }
 
+output "emp_infra_private_subnet_ids" {
+  value = values(aws_subnet.emp_infra_pri_subnets)[*].id
+}
 

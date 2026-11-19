@@ -27,7 +27,7 @@ module "dev_infra_bastion_ec2" {
   source = "../../modules/ec2"
   env = var.env
   emp_infra_vpc_id = module.dev_vpc.emp_infra_vpc_id
-  pub_subnet_id = module.dev_vpc.emp_infra_public_subnet_ids["subnet_1"]
+  pub_subnet_id = module.dev_vpc.emp_infra_public_subnet_ids[0]
   pub_instance_type = var.instance_name
   instance_name = var.pub_instance_type
   pub_security_group = aws_security_group.dev_infra_bastion_security_group.id
@@ -40,9 +40,11 @@ module "dev_infra_ecr" {
   repo_name = each.value
 }
 
-# module "dev_infra_eks_cluster" {
-#   source = "../../modules/eks"
-#   env = var.env
-#   emp_infra_pri_subnets = var.dev_pri_subnets
-#   node_group_policies = var.dev_cluster_node_group_policies
-# }
+module "dev_infra_eks_cluster" {
+  source = "../../modules/eks"
+  env = var.env
+  emp_infra_pri_subnets = module.dev_vpc.emp_infra_private_subnet_ids
+  node_group_policies = var.dev_cluster_node_group_policies
+  authentication_mode = var.dev_infra_cluster_authentication_mode
+  cluster_version = var.dev_infra_cluster_version
+}

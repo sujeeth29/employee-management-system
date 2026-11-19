@@ -18,3 +18,7 @@ dev_infra_private_subnets = {
     subnet_name = "subnet_1a"
   }
 }
+
+dev_infra_cluster_authentication_mode = "API"
+dev_infra_cluster_version = "1.35"
+dev_cluster_node_group_policies = [  "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly", "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy", "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy" ]
