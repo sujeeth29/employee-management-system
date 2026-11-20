@@ -42,3 +42,15 @@ variable "dev_infra_cluster_version" {
 variable "dev_cluster_node_group_policies" {
   type = list(string)
 }
+
+variable "dev_infra_node_group_instance_type" {
+  type = string
+}
+
+variable "cluster_bastion_instance_type" {
+  type = string
+}
+
+variable "enable_cluster_bastion_server" {
+  type = bool
+}

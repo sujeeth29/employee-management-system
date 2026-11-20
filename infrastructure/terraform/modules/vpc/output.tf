@@ -3,7 +3,7 @@ output "emp_infra_vpc_id" {
 }
 
 output "emp_infra_public_subnet_ids" {
-  value = values(aws_subnet.emp_infra_pub_1_app)[*].id
+  value = values(aws_subnet.emp_infra_pub_subnets)[*].id
 }
 
 output "emp_infra_private_subnet_ids" {

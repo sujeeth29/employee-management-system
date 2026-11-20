@@ -5,7 +5,7 @@ resource "aws_vpc" "emp_infra_vpc" {
   }
 }
 
-resource "aws_subnet" "emp_infra_pub_1_app" {
+resource "aws_subnet" "emp_infra_pub_subnets" {
   for_each = var.emp_infra_public_subnets_keys
   vpc_id = aws_vpc.emp_infra_vpc.id
   cidr_block = each.value.cidr
@@ -40,9 +40,9 @@ resource "aws_route_table" "emp_infra_pub_rt" {
 }
 
 resource "aws_route_table_association" "emp_pub_rt_appsub_associa" {
-  count = length(values(aws_subnet.emp_infra_pub_1_app)[*].id)
+  count = length(values(aws_subnet.emp_infra_pub_subnets)[*].id)
   route_table_id = aws_route_table.emp_infra_pub_rt.id
-  subnet_id = values(aws_subnet.emp_infra_pub_1_app)[count.index].id
+  subnet_id = values(aws_subnet.emp_infra_pub_subnets)[count.index].id
 }
 
 resource "aws_subnet" "emp_infra_pri_subnets" {
