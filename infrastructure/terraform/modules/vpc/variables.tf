@@ -1,4 +1,4 @@
-variable "env" {
+variable "emp_infra_env" {
   type = string
 }
 

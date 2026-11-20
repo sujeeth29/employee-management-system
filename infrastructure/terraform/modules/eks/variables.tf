@@ -2,23 +2,23 @@ variable "emp_infra_pri_subnets" {
   type = list(string)
 }
 
-variable "env" {
+variable "emp_infra_env" {
   type = string
 }
 
-variable "authentication_mode" {
+variable "emp_infra_cluster_authentication_mode" {
   type = string
 }
 
-variable "cluster_version" {
+variable "emp_infra_cluster_version" {
   type = string
 }
 
-variable "node_group_policies" {
+variable "emp_infra_node_group_policies" {
   type = list(string)
 }
 
-variable "node_group_instance_type" {
+variable "emp_infra_node_group_instance_type" {
   type = string
 }
 
@@ -33,10 +33,10 @@ variable "emp_infra_cluster_bastion_subnet" {
   type = string
 }
 
-variable "bastion_instance_type" {
+variable "emp_infra_cluster_bastion_instance_type" {
   type = string
 }
 
-variable "enable_cluster_bastion_server" {
+variable "emp_infra_enable_cluster_bastion_server" {
   type = bool
 }

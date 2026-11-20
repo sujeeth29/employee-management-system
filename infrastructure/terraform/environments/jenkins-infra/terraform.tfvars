@@ -1,6 +1,6 @@
-env = "jenkins"
-instance_name = "jenkins"
-pub_instance_type = "t3.micro"
+jenkins_infra_env = "jenkins"
+jenkins_infra_instance_name = "jenkins"
+jenkins_infra_pub_instance_type = "t3.micro"
 # jenkins_infra_public_subnet_keys = {
 #   "subnet_1" = {
 #     cidr = "10.0.2.180/30"

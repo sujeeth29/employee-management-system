@@ -1,4 +1,4 @@
-variable "env" {
+variable "dev_infra_env" {
   type = string
 }
 
@@ -11,11 +11,11 @@ variable "dev_infra_public_subnets" {
   }))
 }
 
-variable "instance_name" {
+variable "dev_infra_instance_name" {
   type = string
 }
 
-variable "pub_instance_type" {
+variable "dev_infra_pub_instance_type" {
   type = string
 }
 
@@ -27,7 +27,7 @@ variable "dev_infra_private_subnets" {
   }))
 }
 
-variable "dev_repo_name" {
+variable "dev_infra_repo_name" {
   type = list(string)
 }
 
@@ -39,7 +39,7 @@ variable "dev_infra_cluster_version" {
   type = string
 }
 
-variable "dev_cluster_node_group_policies" {
+variable "dev_infra_cluster_node_group_policies" {
   type = list(string)
 }
 
@@ -47,10 +47,10 @@ variable "dev_infra_node_group_instance_type" {
   type = string
 }
 
-variable "cluster_bastion_instance_type" {
+variable "dev_infra_cluster_bastion_instance_type" {
   type = string
 }
 
-variable "enable_cluster_bastion_server" {
+variable "dev_infra_enable_cluster_bastion_server" {
   type = bool
 }

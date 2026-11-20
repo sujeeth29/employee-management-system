@@ -1,7 +1,7 @@
-variable "env" {
+variable "emp_infra_env" {
   type = string
 }
 
-variable "repo_name" {
+variable "emp_infra_repo_name" {
   type = string
 }

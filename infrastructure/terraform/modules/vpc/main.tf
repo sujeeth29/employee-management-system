@@ -1,7 +1,7 @@
 resource "aws_vpc" "emp_infra_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
-    Name = "${var.env}-vpc"
+    Name = "${var.emp_infra_env}-vpc"
   }
 }
 
@@ -12,14 +12,14 @@ resource "aws_subnet" "emp_infra_pub_subnets" {
   availability_zone = each.value.availability_zone
   map_public_ip_on_launch = each.value.map_public_ip_on_launch
   tags = {
-    Name = "${var.env}-pub-${each.value.subnet_name}"
+    Name = "${var.emp_infra_env}-pub-${each.value.subnet_name}"
   }
 }
 
 
 resource "aws_internet_gateway" "emp_infra_igw" {
   tags = {
-    Name = "${var.env}-igw"
+    Name = "${var.emp_infra_env}-igw"
   }
 }
 
@@ -35,7 +35,7 @@ resource "aws_route_table" "emp_infra_pub_rt" {
     gateway_id = aws_internet_gateway.emp_infra_igw.id
   }
   tags = {
-    Name = "${var.env}-pub-rt"
+    Name = "${var.emp_infra_env}-pub-rt"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_subnet" "emp_infra_pri_subnets" {
   cidr_block = each.value.cidr
   availability_zone = each.value.availability_zone
   tags = {
-    Name = "${var.env}-pri-${each.value.subnet_name}"
+    Name = "${var.emp_infra_env}-pri-${each.value.subnet_name}"
   }
 }
 
@@ -59,7 +59,7 @@ resource "aws_nat_gateway" "emp_infra_natgw" {
   vpc_id = aws_vpc.emp_infra_vpc.id
   availability_mode = "regional"
   tags = {
-    Name = "${var.env}-natgw"
+    Name = "${var.emp_infra_env}-natgw"
   }
   depends_on = [ aws_internet_gateway.emp_infra_igw ]
 }
@@ -71,7 +71,7 @@ resource "aws_route_table" "emp_infra_pri_rt" {
     nat_gateway_id = aws_nat_gateway.emp_infra_natgw.id
   }
   tags = {
-    Name = "${var.env}-pri-rt"
+    Name = "${var.emp_infra_env}-pri-rt"
   }
 }
 

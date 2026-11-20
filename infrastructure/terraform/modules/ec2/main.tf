@@ -14,10 +14,11 @@ data "aws_ami" "emp_infra_ubuntu_image" {
 
 resource "aws_instance" "emp_infra_pub_server" {
     ami = data.aws_ami.emp_infra_ubuntu_image.id
-    subnet_id = var.pub_subnet_id
-    security_groups = [ var.pub_security_group ]
-    instance_type = var.pub_instance_type
+    subnet_id = var.emp_infra_pub_subnet_id
+    iam_instance_profile = var.emp_infra_public_instance_profile
+    security_groups = [ var.emp_infra_pub_security_group ]
+    instance_type = var.emp_infra_pub_instance_type
     tags = {
-      Name = "${var.env}-server-${var.instance_name}"
+      Name = "${var.emp_infra_env}-server-${var.emp_infra_instance_name}"
     }
 }

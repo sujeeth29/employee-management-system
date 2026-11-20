@@ -1,6 +1,6 @@
 ############# EKS Cluster Config ####################
 resource "aws_iam_role" "emp_infra_eks_cluster_role" {
-  name = "${var.env}-cluster-role"
+  name = "${var.emp_infra_env}-cluster-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -19,11 +19,11 @@ resource "aws_iam_role" "emp_infra_eks_cluster_role" {
 }
 
 resource "aws_eks_cluster" "emp_infra_eks_cluster" {
-  name = "${var.env}-infra-cluster"
+  name = "${var.emp_infra_env}-infra-cluster"
   access_config {
-    authentication_mode = var.authentication_mode
+    authentication_mode = var.emp_infra_cluster_authentication_mode
   }
-  version = var.cluster_version
+  version = var.emp_infra_cluster_version
   role_arn = aws_iam_role.emp_infra_eks_cluster_role.arn
   vpc_config {
     endpoint_private_access = true
@@ -34,7 +34,7 @@ resource "aws_eks_cluster" "emp_infra_eks_cluster" {
 }
 
 resource "aws_security_group_rule" "emp_infra_cluster_security_group_ingress" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
   type = "ingress"
   from_port = 443
   to_port = 443
@@ -66,10 +66,10 @@ data "aws_ami" "emp_infra_amz_linux_ami_id" {
 }
 
 resource "aws_security_group" "emp_infra_cluster_bastion_security_group" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
   vpc_id = var.emp_infra_vpc_id
-  name = "${var.env}-cluster-bastion-security-group"
-  description = "${var.env} cluster bastion's security group"
+  name = "${var.emp_infra_env}-cluster-bastion-security-group"
+  description = "${var.emp_infra_env} cluster bastion's security group"
   ingress {
     from_port = 22
     to_port = 22  
@@ -85,20 +85,20 @@ resource "aws_security_group" "emp_infra_cluster_bastion_security_group" {
 }
 
 resource "aws_instance" "emp_infra_cluster_bastion" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
   ami = data.aws_ami.emp_infra_amz_linux_ami_id.id
   subnet_id = var.emp_infra_cluster_bastion_subnet
   security_groups = [ aws_security_group.emp_infra_cluster_bastion_security_group[count.index].id ]
   iam_instance_profile = aws_iam_instance_profile.emp_infra_cluster_bastion_instance_policy[count.index].name
-  instance_type = var.bastion_instance_type
+  instance_type = var.emp_infra_cluster_bastion_instance_type
   tags = {
-    Name = "${var.env}-cluster-bastion"
+    Name = "${var.emp_infra_env}-cluster-bastion"
   }
 }
 
 resource "aws_iam_role" "emp_infra_cluster_bastion_role" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
-  name = "${var.env}-cluster-bastion-role"
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
+  name = "${var.emp_infra_env}-cluster-bastion-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -116,8 +116,8 @@ resource "aws_iam_role" "emp_infra_cluster_bastion_role" {
 }
 
 resource "aws_iam_policy" "emp_infra_cluster_bastion_policy" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
-  name = "${var.env}-cluster-bastion-policy"
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
+  name = "${var.emp_infra_env}-cluster-bastion-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -134,26 +134,26 @@ resource "aws_iam_policy" "emp_infra_cluster_bastion_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "emp_infra_bastion_role_policy_attach" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
   role = aws_iam_role.emp_infra_cluster_bastion_role[count.index].arn
   policy_arn = aws_iam_policy.emp_infra_cluster_bastion_policy[count.index].arn
 }
 
 resource "aws_iam_instance_profile" "emp_infra_cluster_bastion_instance_policy" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
   role = aws_iam_role.emp_infra_cluster_bastion_role[count.index].name
-  name = "${var.env}-cluster-bastion-instance-policy"
+  name = "${var.emp_infra_env}-cluster-bastion-instance-policy"
 }
 
 resource "aws_eks_access_entry" "emp_infra_cluster_access_entry" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
   cluster_name = aws_eks_cluster.emp_infra_eks_cluster.name
   principal_arn = aws_iam_role.emp_infra_cluster_bastion_role[count.index].arn
   type = "STANDARD"
 }
 
 resource "aws_eks_access_policy_association" "emp_infra_cluster_access_policy" {
-  count = var.enable_cluster_bastion_server ? 1 : 0
+  count = var.emp_infra_enable_cluster_bastion_server ? 1 : 0
   cluster_name = aws_eks_cluster.emp_infra_eks_cluster.name
   policy_arn = "arn:aws:eks::aws:cluster_access_policy/AmazonEKSClusterAdminPolicy"
   principal_arn = aws_iam_role.emp_infra_cluster_bastion_role[count.index].arn
@@ -166,7 +166,7 @@ resource "aws_eks_access_policy_association" "emp_infra_cluster_access_policy" {
 
 
 resource "aws_iam_role" "emp_infra_node_group_role" {
-  name = "${var.env}-infra-cluster-nodegroup-role"
+  name = "${var.emp_infra_env}-infra-cluster-nodegroup-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -184,17 +184,17 @@ resource "aws_iam_role" "emp_infra_node_group_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "emp_infra_node_group_policies_attachment" {
-  for_each = toset(var.node_group_policies)
+  for_each = toset(var.emp_infra_node_group_policies)
   policy_arn = each.value
   role = aws_iam_role.emp_infra_node_group_role.name
 }
 
 resource "aws_eks_node_group" "emp_infra_cluster_node_group" {
   cluster_name = aws_eks_cluster.emp_infra_eks_cluster.name
-  node_group_name = "${var.env}-cluster-node-group"
+  node_group_name = "${var.emp_infra_env}-cluster-node-group"
   node_role_arn = aws_iam_role.emp_infra_node_group_role.arn
   subnet_ids = var.emp_infra_pri_subnets
-  instance_types = [ var.node_group_instance_type ]
+  instance_types = [ var.emp_infra_node_group_instance_type ]
   scaling_config {
     desired_size = 1
     max_size = 2

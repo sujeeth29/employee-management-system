@@ -1,14 +1,15 @@
-variable "env" {
+variable "jenkins_infra_env" {
   type = string
 }
 
-variable "instance_name" {
+variable "jenkins_infra_instance_name" {
   type = string
 }
 
-variable "pub_instance_type" {
+variable "jenkins_infra_pub_instance_type" {
   type = string
 }
+
 # variable "jenkins_infra_public_subnet_keys" {
 #   type = map(object({
 #     cidr = string
